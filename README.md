@@ -30,7 +30,7 @@ climate:
 Field | Value | Necessity | Comments
 --- | --- | --- | ---
 platform | `spzb0001_thermostat` | *Required* |
-name| SPZB0001 Thermostat | Optional |
+name| SPZB0001 Thermostat | *Conditional* | Used to distinguish the virtual thermostats
 heater |  | *Conditional* | Switch that will activate/deactivate the heating system. This can be only a single EUROTRONIC SPZB0001 Zigbee entity.
 target_sensor |  | *Required* | Sensor that is used for the actual temperature input of the thermostat.
 min_temp | 5 | Optional | Minimum temperature manually selectable. I recommend to use 5 as this is the lower limit of the EUROTRONIC SPZB0001 Zigbee thermostat.
