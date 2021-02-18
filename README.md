@@ -1,5 +1,5 @@
 # SPZB0001 THERMOSTAT
-A clone created from the Home Assistant generic_thermostat to use EUROTRONIC Zigbee SPZB0001 Thermostats with external temperature sensors.
+A clone created from the Home Assistant generic_thermostat to use EUROTRONIC Zigbee SPZB0001 thermostats with external temperature sensors.
 
 # HOW TO INSTALL
 Just copy paste the content of the climate.spzb_thermostat/custom_components folder in your config/custom_components directory.
@@ -7,7 +7,7 @@ Just copy paste the content of the climate.spzb_thermostat/custom_components fol
 As example you will get the '.py' file in the following path: /config/custom_components/spzb0001_thermostat/climate.py.
 
 ## EXAMPLE OF SETUP
-Config flow is available, so just configure all the entities you want through the user interface.
+You need to configure one virtual spzb0001_thermostat for every used EUROTRONIC Zigbee SPZB0001 thermostat in the `configuration.yaml` file.
 
 Here below the example of manual setup of sensor and parameters to configure.
 ```yaml
