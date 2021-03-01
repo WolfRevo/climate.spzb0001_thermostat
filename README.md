@@ -27,7 +27,7 @@ platform | `spzb0001_thermostat` | *Required* |
 name| SPZB0001 Thermostat | *Conditional* | Used to distinguish the virtual thermostats
 heater |  | *Conditional* | Switch that will activate/deactivate the heating system. This can be only a single EUROTRONIC SPZB0001 Zigbee entity.
 target_sensor |  | *Required* | Sensor that is used for the actual temperature input of the thermostat.
-target_temp | 18 | Temperature used for initialization after Home Assistant has started.
+target_temp | 18 | Optional |Temperature used for initialization after Home Assistant has started.
 initial_hvac_mode | "heat" | *Conditional* | "heat" or "off", what you prefer as the initial startup value of the thermostat.
 away_temp | 15 | Optional | Temperature used if the tag away is set.
 
