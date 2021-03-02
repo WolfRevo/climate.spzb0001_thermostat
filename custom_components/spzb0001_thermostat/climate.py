@@ -31,6 +31,7 @@ from homeassistant.const import (
     ATTR_TEMPERATURE,
     CONF_NAME,
     EVENT_HOMEASSISTANT_START,
+    SERVICE_TURN_OFF,
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
@@ -342,7 +343,6 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         # SPZB: Service set HVAC mode back to auto if set from auto to heat (e.g. manually)
         # if old_state.state != new_state.state: #SPZB: log for debugging (needs this and next line to work properly)
         # _LOGGER.info("Changed state from %s to %s for %s.", old_state.state, new_state.state, new_state.name) #SPZB: log for debugging
-
         if old_state.state == "auto" and new_state.state == "heat":
             data_auto = {
                 ATTR_ENTITY_ID: self.heater_entity_id,
@@ -368,7 +368,9 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
                 data_temp,
                 blocking=True,
             )
-
+            await asyncio.sleep(
+                25
+            )  # SPZB: wait for 25 seconds to let the thermostat finish before sending another command
             # _LOGGER.info("Something tried to switch from auto to heat for %s, so we revert HVAC mode to auto", self.heater_entity_id) #SPZB: log for debugging
         # SPZB: Service set HVAC mode back to auto if set from off to heat (e.g. manually)
         elif old_state.state == "off" and new_state.state == "heat":
@@ -382,7 +384,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
                 data_auto,
                 blocking=True,
             )
-            _LOGGER.info("data_auto: %s", data_auto)
+            # _LOGGER.info("data_auto: %s", data_auto) # SPZB: log for debugging
             await asyncio.sleep(
                 5
             )  # SPZB: wait for 5 seconds due to issues with sending command too fast
@@ -397,6 +399,9 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
                 data_temp,
                 blocking=True,
             )
+            await asyncio.sleep(
+                25
+            )  # SPZB: wait for 25 seconds to let the thermostat finish before sending another command
             # _LOGGER.info("data_temp: %s", data_temp) #SPZB: log for debugging
             # _LOGGER.info("Something tried to switch from off to heat for %s, so we change HVAC mode to auto", self.heater_entity_id) #SPZB: log for debugging
         self.async_write_ha_state()
@@ -470,7 +475,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
     async def _async_heater_turn_on(self):
         """Turn heater toggleable device on."""
         # SPZB: handle EUROTRONIC SPIRIT ZIGBEE thermostat
-        # SPZB: Service set HVAC mode to auto instead of sending STATE_ON to HA service
+        # SPZB: Service set HVAC mode to auto
         data_auto = {
             ATTR_ENTITY_ID: self.heater_entity_id,
             ATTR_HVAC_MODE: HVAC_MODE_AUTO,
@@ -496,6 +501,9 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
             data_temp,
             blocking=True,
         )
+        await asyncio.sleep(
+            25
+        )  # SPZB: wait for 25 seconds to let the thermostat finish before sending another command
         # _LOGGER.info("data_temp: %s for %s", data_temp, self.heater_entity_id) #SPZB: log for debugging
         # _LOGGER.info("_async_heater_turn_on executed for %s", self.heater_entity_id) #SPZB: log for debugging
 
@@ -514,8 +522,8 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
             blocking=True,
         )
         await asyncio.sleep(
-            5
-        )  # SPZB: wait for 5 seconds due to issues with sending command too fast
+            25
+        )  # SPZB: wait for 25 seconds due to issues with sending command too fast
         # SPZB: Service set HVAC mode to off
         data_off = {
             ATTR_ENTITY_ID: self.heater_entity_id,
@@ -527,6 +535,17 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
             data_off,
             blocking=True,
         )
+        await asyncio.sleep(
+            5
+        )  # SPZB: wait for 5 seconds due to issues with sending command too fast
+        # SPZB: Service send off to thermostat
+        data = {ATTR_ENTITY_ID: self.heater_entity_id}
+        await self.hass.services.async_call(
+            HA_DOMAIN, SERVICE_TURN_OFF, data, context=self._context
+        )
+        await asyncio.sleep(
+            30
+        )  # SPZB: wait for 30 seconds to let the thermostat finish before sending another command
         # _LOGGER.info("_async_heater_turn_off executed for %s", self.heater_entity_id) #SPZB: log for debugging
 
     async def async_set_preset_mode(self, preset_mode: str):
