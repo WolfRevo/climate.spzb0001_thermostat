@@ -36,7 +36,6 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import DOMAIN as HA_DOMAIN, CoreState, callback
-from homeassistant.helpers import condition
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.event import (
     async_track_state_change_event,
@@ -77,7 +76,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     name = config.get(CONF_NAME)
     heater_entity_id = config.get(CONF_HEATER)
     sensor_entity_id = config.get(CONF_SENSOR)
-    min_temp = 5.5  # SPZB: hard coded temperature for EUROTRONIC thermostats due to the implementation in deCONZ but + 0.5 degrees to be able to really switch off thermostat
+    min_temp = 5.0  # SPZB: hard coded temperature for EUROTRONIC thermostats due to the implementation in deCONZ
     max_temp = 30.0  # SPZB: hard coded temperature for EUROTRONIC thermostats due to the implementation in deCONZ
     target_temp = config.get(CONF_TARGET_TEMP)
     initial_hvac_mode = config.get(CONF_INITIAL_HVAC_MODE)
