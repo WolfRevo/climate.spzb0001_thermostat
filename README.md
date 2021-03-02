@@ -32,11 +32,11 @@ initial_hvac_mode | "heat" | *Conditional* | "heat" or "off", what you prefer as
 away_temp | 15 | Optional | Temperature used if the tag away is set.
 
 ## ADDITIONAL INFO
-This custom component replicates the original generic_thermostat component from Home Assistant to integrate the EUROTRONIC SPZB0001 Zigbee thermostat while using an external temperature sensor for the room temperature. It is stripped down to the necessary only and working configuration options (see above). Lower and upper temperature are hardcoded to reflect the deCONZ integration. The lower temperature is set to 5.5 because the thermostat would not show "off" if temperature is set to 5.0 and the HVAC_MODE_OFF command is send.
+This custom component replicates the original generic_thermostat component from Home Assistant to integrate the EUROTRONIC SPZB0001 Zigbee thermostat while using an external temperature sensor for the room temperature. It is stripped down to the necessary only and working configuration options (see above). Lower and upper temperature are hardcoded to reflect the deCONZ integration.
 
 You still need the original EUROTRONIC SPZB0001 Zigbee thermostat as an identy in Home Assistant (best used with the official deCONZ Add-On). The new spzb0001_thermostat just controls this device in the following matter:
 
 The EUROTRONIC SPZB0001 Zigbee thermostat can't be used as a normal heater switch (`STATE_ON`, `STATE_OFF`) as it only knows `HVAC_MODE_OFF`, `HVAC_MODE_AUTO`, `HVAC_MODE_HEAT` and automatically changes from `HVAC_MODE_HEAT` to `HVAC_MODE_AUTO` after some time. This behaviour can't actually be changed. So the spzb0001_thermostat uses the `HVAC_MODE_AUTO` and the `ATTR_TEMPERATURE=max_temp` (the 30°C per deCONZ integration) to control the EUROTRONIC SPZB0001 Zigbee thermostat and cause it to fully open the valve.
-To switch off the EUROTRONIC SPZB0001 Zigbee thermostat the spzb0001_thermostat uses the `HVAC_MODE_OFF`, the `ATTR_TEMPERATURE=min_temp` (the 5.5°C as stated above).
+To switch off the EUROTRONIC SPZB0001 Zigbee thermostat the spzb0001_thermostat uses the `ATTR_TEMPERATURE=min_temp` and the `HVAC_MODE_OFF` with tested delays to prevent inconsistent states.
 
 For controlling purposes you can visually add the original EUROTRONIC SPZB0001 Zigbee thermostats to another lovelace view to compare the states of the virtual spzb0001_thermostat and the corresponding EUROTRONIC SPZB0001 Zigbee thermostat.
