@@ -1,11 +1,12 @@
 {
   "domain": "spzb0001_thermostat",
   "name": "SPZB0001 Thermostat",
-  "documentation": "custom/missing",
-  "issue_tracker": "custom/missing",
-  "version": "0.0.1",
-  "dependencies": ["sensor", "switch"],
-  "after_dependencies": [],
-  "codeowners": ["@WolfRevo"],
-  "requirements": []
+  "documentation": "https://github.com/WolfRevo/climate.spzb0001_thermostat/",
+  "dependencies": [
+    "sensor",
+    "switch"
+  ],
+  "codeowners": [],
+  "requirements": [],
+  "config_flow": true
 }
