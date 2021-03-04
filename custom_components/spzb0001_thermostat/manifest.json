@@ -2,6 +2,7 @@
   "domain": "spzb0001_thermostat",
   "name": "SPZB0001 Thermostat",
   "documentation": "https://github.com/WolfRevo/climate.spzb0001_thermostat/",
+  "issue_tracker": "https://github.com/WolfRevo/climate.spzb0001_thermostat/",
   "version": "0.0.1-alpha",
   "dependencies": [
     "sensor",
