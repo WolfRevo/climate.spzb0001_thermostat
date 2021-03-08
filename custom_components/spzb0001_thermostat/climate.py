@@ -322,8 +322,8 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         if new_state is None or new_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return
 
-        _logger.debug("_async_sensor_changed runs for %s with state %s", new_state.name, new_state) #SPZB: log for debugging
-        _logger.debug("_async_sensor_changed runs for %s", new_state.name) #SPZB: log for debugging
+        _LOGGER.debug("_async_sensor_changed runs for %s with state %s", new_state.name, new_state) #SPZB: log for debugging
+        _LOGGER.debug("_async_sensor_changed runs for %s", new_state.name) #SPZB: log for debugging
         self._async_update_temp(new_state)
         await self._async_control_heating()
         self.async_write_ha_state()
@@ -341,7 +341,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         # SPZB: handle EUROTRONIC SPIRIT ZIGBEE thermostat
         # SPZB: Service set HVAC mode back to auto if set from auto to heat (e.g. manually)
         # if old_state.state != new_state.state: #SPZB: log for debugging (needs this and next line to work properly)
-        _logger.debug("Changed state from %s to %s for %s.", old_state.state, new_state.state, new_state.name) #SPZB: log for debugging
+        _LOGGER.debug("Changed state from %s to %s for %s.", old_state.state, new_state.state, new_state.name) #SPZB: log for debugging
         if old_state.state == "auto" and new_state.state == "heat":
             data_auto = {
                 ATTR_ENTITY_ID: self.heater_entity_id,
@@ -370,7 +370,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
             await asyncio.sleep(
                 25
             )  # SPZB: wait for 25 seconds to let the thermostat finish before sending another command
-            _logger.debug("Something tried to switch from auto to heat for %s, so we revert HVAC mode to auto", self.heater_entity_id) #SPZB: log for debugging
+            _LOGGER.debug("Something tried to switch from auto to heat for %s, so we revert HVAC mode to auto", self.heater_entity_id) #SPZB: log for debugging
         # SPZB: Service set HVAC mode back to auto if set from off to heat (e.g. manually)
         elif old_state.state == "off" and new_state.state == "heat":
             data_auto = {
@@ -383,7 +383,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
                 data_auto,
                 blocking=True,
             )
-            _logger.debug("data_auto: %s", data_auto) # SPZB: log for debugging
+            _LOGGER.debug("data_auto: %s", data_auto) # SPZB: log for debugging
             await asyncio.sleep(
                 5
             )  # SPZB: wait for 5 seconds due to issues with sending command too fast
@@ -401,8 +401,8 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
             await asyncio.sleep(
                 25
             )  # SPZB: wait for 25 seconds to let the thermostat finish before sending another command
-            _logger.debug("data_temp: %s", data_temp) #SPZB: log for debugging
-            _logger.debug("Something tried to switch from off to heat for %s, so we change HVAC mode to auto", self.heater_entity_id) #SPZB: log for debugging
+            _LOGGER.debug("data_temp: %s", data_temp) #SPZB: log for debugging
+            _LOGGER.debug("Something tried to switch from off to heat for %s, so we change HVAC mode to auto", self.heater_entity_id) #SPZB: log for debugging
         self.async_write_ha_state()
 
     @callback
@@ -410,7 +410,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         """Update thermostat with latest state from sensor."""
         try:
             self._cur_temp = float(state.state)
-            _logger.debug("_async_update_temp: %s for %s", self._cur_temp, self.heater_entity_id) #SPZB: log for debugging
+            _LOGGER.debug("_async_update_temp: %s for %s", self._cur_temp, self.heater_entity_id) #SPZB: log for debugging
         except ValueError as ex:
             _LOGGER.error("Unable to update from sensor: %s", ex)
 
@@ -418,11 +418,11 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         """Check if we need to turn heating on or off."""
         if self.startup == True:  # SPZB: check if HA was freshly initialized
             await self._async_init_shutdown_thermostat()  # SPZB: turn of the corresponding EUROTRONIC thermostat on startup
-        _logger.debug("_async_control_heating running for %s", self.heater_entity_id) #SPZB: log for debugging
+        _LOGGER.debug("_async_control_heating running for %s", self.heater_entity_id) #SPZB: log for debugging
         async with self._temp_lock:
             if not self._active and None not in (self._cur_temp, self._target_temp):
                 self._active = True
-                _logger.debug(
+                _LOGGER.debug(
                     "Obtained current and target temperature. "
                     "SPZB0001 thermostat active. %s, %s",
                     self._cur_temp,
@@ -438,11 +438,11 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
             # SPZB: log for debugging
             if self._is_device_active:
                 if too_hot:
-                    _logger.debug("Turning off heater %s", self.heater_entity_id)
+                    _LOGGER.debug("Turning off heater %s", self.heater_entity_id)
                     await self._async_heater_turn_off()
             else:
                 if too_cold:
-                    _logger.debug("Turning on heater %s", self.heater_entity_id)
+                    _LOGGER.debug("Turning on heater %s", self.heater_entity_id)
                     await self._async_heater_turn_on()
 
     @property
@@ -454,16 +454,16 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         state_heat = self.hass.states.is_state(self.heater_entity_id, "heat")
         state_auto = self.hass.states.is_state(self.heater_entity_id, "auto")
         state_temp = self.hass.states.get(self.heater_entity_id)
-        _logger.debug("%s.state = %s", self.heater_entity_id, state_temp) #SPZB: log for debugging
-        _logger.debug("%s.SetPointTemp = %s", self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE]) #SPZB: log for debugging
+        _LOGGER.debug("%s.state = %s", self.heater_entity_id, state_temp) #SPZB: log for debugging
+        _LOGGER.debug("%s.SetPointTemp = %s", self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE]) #SPZB: log for debugging
         if (state_auto and state_temp.attributes[ATTR_TEMPERATURE] == 5.0) or state_off:
-            _logger.debug("state_auto: %s and %s.SetPointTemp = %s", state_auto, self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE]) #SPZB: log for debugging
+            _LOGGER.debug("state_auto: %s and %s.SetPointTemp = %s", state_auto, self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE]) #SPZB: log for debugging
             return False
         elif state_heat:
-            _logger.debug("state_heat: %s for %s", state_heat, self.heater_entity_id) #SPZB: log for debugging
+            _LOGGER.debug("state_heat: %s for %s", state_heat, self.heater_entity_id) #SPZB: log for debugging
             return state_heat
         elif state_auto:
-            _logger.debug("state_auto: %s for %s", state_auto, self.heater_entity_id) #SPZB: log for debugging
+            _LOGGER.debug("state_auto: %s for %s", state_auto, self.heater_entity_id) #SPZB: log for debugging
             return state_auto
 
     @property
@@ -488,7 +488,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         await asyncio.sleep(
             5
         )  # SPZB: wait for 5 seconds due to issues with sending command too fast
-        _logger.debug("data_auto: %s for %s", data_auto, self.heater_entity_id) #SPZB: log for debugging
+        _LOGGER.debug("data_auto: %s for %s", data_auto, self.heater_entity_id) #SPZB: log for debugging
         # SPZB: Service set temperature to max_temp
         data_temp = {
             ATTR_ENTITY_ID: self.heater_entity_id,
@@ -503,8 +503,8 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         await asyncio.sleep(
             25
         )  # SPZB: wait for 25 seconds to let the thermostat finish before sending another command
-        _logger.debug("data_temp: %s for %s", data_temp, self.heater_entity_id) #SPZB: log for debugging
-        _logger.debug("_async_heater_turn_on executed for %s", self.heater_entity_id) #SPZB: log for debugging
+        _LOGGER.debug("data_temp: %s for %s", data_temp, self.heater_entity_id) #SPZB: log for debugging
+        _LOGGER.debug("_async_heater_turn_on executed for %s", self.heater_entity_id) #SPZB: log for debugging
 
     async def _async_heater_turn_off(self):
         """Turn heater toggleable device off."""
@@ -545,7 +545,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         await asyncio.sleep(
             30
         )  # SPZB: wait for 30 seconds to let the thermostat finish before sending another command
-        _logger.debug("_async_heater_turn_off executed for %s", self.heater_entity_id) #SPZB: log for debugging
+        _LOGGER.debug("_async_heater_turn_off executed for %s", self.heater_entity_id) #SPZB: log for debugging
 
     async def async_set_preset_mode(self, preset_mode: str):
         """Set new preset mode."""
@@ -567,4 +567,4 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         """Shutdown the connected SPZB0001 thermostat after restart of HA to prevent wrong state"""
         await self._async_heater_turn_off()  # turn of the corresponding EUROTRONIC thermostat on startup
         self.startup = False
-        _logger.debug("_async_init_shutdown_thermostat running for %s", self.heater_entity_id) #SPZB: log for debugging
+        _LOGGER.debug("_async_init_shutdown_thermostat running for %s", self.heater_entity_id) #SPZB: log for debugging
