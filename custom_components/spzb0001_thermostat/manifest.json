@@ -3,6 +3,7 @@
   "name": "SPZB0001 Thermostat",
   "documentation": "https://github.com/WolfRevo/climate.spzb0001_thermostat/",
   "issue_tracker": "https://github.com/WolfRevo/climate.spzb0001_thermostat/issues",
+  "iot_class": "local_push"
   "version": "0.0.1-alpha",
   "dependencies": [
     "sensor",
