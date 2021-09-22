@@ -455,7 +455,7 @@ class SPZB0001Thermostat(ClimateEntity, RestoreEntity):
         state_auto = self.hass.states.is_state(self.heater_entity_id, "auto")
         state_temp = self.hass.states.get(self.heater_entity_id)
         _LOGGER.debug("%s.state = %s", self.heater_entity_id, state_temp) #SPZB: log for debugging
-        _LOGGER.debug("%s.SetPointTemp = %s", self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE]) #SPZB: log for debugging
+        _LOGGER.debug("%s.SetPointTemp = %s", self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE] if state_temp != None else None) #SPZB: log for debugging
         if (state_auto and state_temp.attributes[ATTR_TEMPERATURE] == 5.0) or state_off:
             _LOGGER.debug("state_auto: %s and %s.SetPointTemp = %s", state_auto, self.heater_entity_id, state_temp.attributes[ATTR_TEMPERATURE]) #SPZB: log for debugging
             return False
