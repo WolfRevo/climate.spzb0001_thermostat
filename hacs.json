@@ -1,6 +1,4 @@
 {
   "name": "SPZB0001 Thermostat",
-  "render_readme": true,
-  "domains": ["climate"],
-  "iot_class": "Local Push"
+  "render_readme": true
 }
