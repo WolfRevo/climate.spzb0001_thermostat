@@ -1,3 +1,6 @@
+# **IMPORTANT: DEPRECATED**
+# **THIS CUSTOM INTEGRATION IS NOT MAINTAINED ANY MORE -> NO FUNCTION GUARANTEED / USE AT YOUR OWN RISK**
+
 # SPZB0001 THERMOSTAT
 A clone created from the Home Assistant generic_thermostat to use EUROTRONIC Zigbee SPZB0001 thermostats with external temperature sensors.
 
